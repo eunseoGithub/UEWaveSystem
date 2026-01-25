@@ -6,10 +6,12 @@
 #include "GameFramework/GameModeBase.h"
 #include "WaveSystemGameModeBase.generated.h"
 
-
 UCLASS()
 class UEWAVESYSTEM_API AWaveSystemGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	// ...
+
+public:
+	virtual void BeginPlay() override;
+
 };

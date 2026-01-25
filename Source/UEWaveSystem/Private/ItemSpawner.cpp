@@ -4,7 +4,7 @@
 #include "ItemSpawner.h"
 
 #include "ItemBase.h"
-#include "Components/BillboardComponent.h"
+#include "TimerManager.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -25,28 +25,7 @@ AItemSpawner::AItemSpawner()
 void AItemSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	if (bAutoSpawn)
-	{
-		StartAutoSpawn();
-	}
-}
-
-void AItemSpawner::StartAutoSpawn()
-{
-	GetWorldTimerManager().ClearTimer(SpawnTimer);
-	GetWorldTimerManager().SetTimer(
-		SpawnTimer,
-		this,
-		&AItemSpawner::SpawnTick,
-		SpawnInterval,
-		true,
-		InitialDelay
-		);
-}
-
-void AItemSpawner::SpawnTick()
-{
-	SpawnBatch();
+	
 }
 
 void AItemSpawner::CleanupAliveList()
@@ -63,7 +42,10 @@ TSubclassOf<AItemBase> AItemSpawner::PickRandomItemClass() const
 	const int32 Index = FMath::RandRange(0, ItemPool.Num()-1);
 	return ItemPool[Index];
 }
-
+void AItemSpawner::SetSpawnWaveParams(FSpawnerWaveParams Params)
+{
+	CurrentParam = Params;
+}
 FVector AItemSpawner::GetRandomPointInBox() const
 {
 	const FVector Origin = SpawnBox->GetComponentLocation();
@@ -91,11 +73,11 @@ void AItemSpawner::SpawnBatch()
 	UWorld* World = GetWorld();
 	if (!World) return;
 	
-	int32 SpawnCount = BatchSpawnCount;
+	int32 SpawnCount = CurrentParam.BatchCount;
 	
-	if (MaxAlive > 0)
+	if (CurrentParam.MaxAlive > 0)
 	{
-		const int32 Available = MaxAlive - AliveItems.Num();
+		const int32 Available = CurrentParam.MaxAlive - AliveItems.Num();
 		if (Available <=0) return;
 		SpawnCount = FMath::Min(SpawnCount, Available);
 	}

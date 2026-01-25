@@ -2,4 +2,10 @@
 
 
 #include "WaveSystemGameModeBase.h"
+#include "Engine/World.h"
 
+void AWaveSystemGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+}

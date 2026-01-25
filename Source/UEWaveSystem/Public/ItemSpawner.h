@@ -9,6 +9,24 @@
 class AItemBase;
 class UBoxComponent;
 
+USTRUCT(BlueprintType)
+struct FSpawnerWaveParams
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 NumTicks = 5;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 BatchCount = 3;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InitialDelay = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxAlive = 0;
+};
+
 UCLASS()
 class UEWAVESYSTEM_API AItemSpawner : public AActor
 {
@@ -17,45 +35,35 @@ class UEWAVESYSTEM_API AItemSpawner : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AItemSpawner();
-	
-	UFUNCTION(BlueprintCallable, Category="Item Spawner")
-	void SpawnBatch();
-	
+	UFUNCTION()
+	void SetSpawnWaveParams(FSpawnerWaveParams Params);
 protected:
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category="Item Spawner")
-	UBoxComponent* SpawnBox;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,Category="Item Spawner")
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UBoxComponent* SpawnBox = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spawn|Pool")
 	TArray<TSubclassOf<AItemBase>> ItemPool;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Spawner", meta=(ClampMin="1"))
-	int32 BatchSpawnCount = 3;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Spanwer")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spawn|Rule")
+	float ZOffset = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spawn|Legacy")
 	bool bAutoSpawn = false;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Spanwer", meta=(ClampMin="0.01"))
-	float SpawnInterval = 5.0f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Spawner",meta=(ClampMin="0.0"))
-	float InitialDelay = 0.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Spawner",meta=(ClampMin="0"))
-	int32 MaxAlive = 0;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Spanwer")
-	float ZOffset = 0.0f;
 private:
 	FTimerHandle SpawnTimer;
 	
 	UPROPERTY()
-	TArray<AActor*> AliveItems;
-	
+	TArray<AItemBase*> AliveItems;
+	FSpawnerWaveParams CurrentParam;
+public:
 	void CleanupAliveList();
-	void StartAutoSpawn();
-	void SpawnTick();
+	void SpawnBatch();
 	
 	TSubclassOf<AItemBase> PickRandomItemClass() const;
 	FVector GetRandomPointInBox() const;
