@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "BombItem.generated.h"
 
+class AExplosionArea;
+
 UCLASS()
 class UEWAVESYSTEM_API ABombItem :  public AItemBase
 {
@@ -21,6 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void ItemActive(AActor* Activator) override;
-
-
+	
+	UPROPERTY(EditDefaultsOnly)
+	UClass* ExplosionAreaActor;
 };

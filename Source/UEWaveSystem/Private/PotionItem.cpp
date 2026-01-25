@@ -4,6 +4,7 @@
 #include "PotionItem.h"
 
 #include "TagManager.h"
+#include "UEWaveSystem/UEWaveSystemCharacter.h"
 
 // Sets default values
 APotionItem::APotionItem()
@@ -24,6 +25,19 @@ void APotionItem::BeginPlay()
 void APotionItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	FRotator NewRotation = GetActorRotation();
+	NewRotation.Yaw += 20.f * DeltaTime; 
+	SetActorRotation(NewRotation);
+}
 
+void APotionItem::ItemActive(AActor* Activator)
+{
+	if (!Activator) return;
+	
+	AUEWaveSystemCharacter* Player = Cast<AUEWaveSystemCharacter>(Activator);
+	if (!Player) return;
+	
+	Player->AddHp(HpAmount);
+	DestroyItem();
 }
 

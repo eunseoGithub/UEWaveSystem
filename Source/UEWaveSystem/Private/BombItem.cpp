@@ -3,7 +3,9 @@
 
 #include "BombItem.h"
 
+#include "ExplosionArea.h"
 #include "TagManager.h"
+#include "UEWaveSystem/UEWaveSystemCharacter.h"
 
 // Sets default values
 ABombItem::ABombItem()
@@ -24,11 +26,25 @@ void ABombItem::BeginPlay()
 void ABombItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 void ABombItem::ItemActive(AActor* Activator)
 {
+	if (!Activator) return;
+	AUEWaveSystemCharacter* Player = Cast<AUEWaveSystemCharacter>(Activator);
+	if (!Player) return;
 	
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	AExplosionArea * Area = GetWorld()->SpawnActor<AExplosionArea>(
+		ExplosionAreaActor,
+		GetActorLocation(),
+		FRotator::ZeroRotator,
+		Params
+		);
+	if (!Area) return;
+	DestroyItem();
 }
 

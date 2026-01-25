@@ -3,6 +3,7 @@
 
 #include "ItemBase.h"
 #include "Components/SphereComponent.h"
+#include "UEWaveSystem/UEWaveSystemCharacter.h"
 
 // Sets default values
 AItemBase::AItemBase()
@@ -10,7 +11,7 @@ AItemBase::AItemBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	
-	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Scene"));
+	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	SetRootComponent(Collision);
 	Collision->SetCollisionProfileName((TEXT("OverlapAllDynamic")));
 	
@@ -40,7 +41,10 @@ void AItemBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp,AActor* OtherA
 		UE_LOG(LogTemp, Log, TEXT(" - Actor Tag : %s"),
 			*Tag.ToString());
 	}
-	if (OtherActor && OtherActor->ActorHasTag("Player"))
+	AUEWaveSystemCharacter* Character = Cast<AUEWaveSystemCharacter>(OtherActor);
+	const FGameplayTag PlayerTag = FGameplayTag::RequestGameplayTag(FName("Player"));
+	
+	if (Character && Character->GetTag() == PlayerTag)
 	{
 		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Green,FString::Printf(TEXT("Overlap!")));
 		ItemActive(OtherActor);

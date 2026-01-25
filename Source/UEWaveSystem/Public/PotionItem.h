@@ -17,11 +17,9 @@ public:
 	APotionItem();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void ItemActive(AActor* Activator) override;
+private:
+	int32 HpAmount = 30;
 };

@@ -10,12 +10,12 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
-
+#include "TagManager.h"
 AUEWaveSystemCharacter::AUEWaveSystemCharacter()
 {
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
+	
 	// Don't rotate character to camera direction
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -43,9 +43,32 @@ AUEWaveSystemCharacter::AUEWaveSystemCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+	Tag = TAG_PLAYER;
+}
+
+FGameplayTag AUEWaveSystemCharacter::GetTag() const
+{
+	return Tag;
 }
 
 void AUEWaveSystemCharacter::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
+}
+
+int32 AUEWaveSystemCharacter::GetHp() const
+{
+	return Hp;
+}
+
+void AUEWaveSystemCharacter::AddHp(int32 Amount)
+{
+	Hp = FMath::Clamp(Hp + Amount,0.f,MaxHp);
+	UE_LOG(LogTemp,Log,TEXT("HP : %d"),Hp);
+}
+
+void AUEWaveSystemCharacter::Damage(int32 Amount)
+{
+	Hp = FMath::Clamp(Hp- Amount,MinHp,Hp);
+	UE_LOG(LogTemp,Log,TEXT("HP : %d"),Hp);
 }

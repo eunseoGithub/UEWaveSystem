@@ -76,11 +76,11 @@ void AUEWaveSystemPlayerController::OnSetDestinationTriggered()
 	bool bHitSuccessful = false;
 	if (bIsTouch)
 	{
-		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_Visibility, true, Hit);
+		bHitSuccessful = GetHitResultUnderFinger(ETouchIndex::Touch1, ECollisionChannel::ECC_WorldStatic, true, Hit);
 	}
 	else
 	{
-		bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+		bHitSuccessful = GetHitResultUnderCursor(ECollisionChannel::ECC_WorldStatic, true, Hit);
 	}
 
 	// If we hit a surface, cache the location
