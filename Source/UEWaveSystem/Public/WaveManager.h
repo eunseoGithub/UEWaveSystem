@@ -7,6 +7,9 @@
 
 class UWaveDataAsset;
 class AItemSpawner;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAllWaveFinished);
+
 UCLASS()
 class UEWAVESYSTEM_API AWaveManager : public AActor
 {
@@ -32,13 +35,20 @@ private:
 	void InitialTime();
 public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetRemainingTime() const {return CurrentDuration;}
+	float GetRemainingTime() const {return RemainingTime;}
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FString GetWaveName() const {return Wave[CurrentWaveIndex]->WaveName;}
+	
+	UPROPERTY(BlueprintAssignable, Category="Wave")
+	FOnAllWaveFinished OnAllWaveFinished;
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Time")
 	float CurrentDuration = 0.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Time")
+	float RemainingTime = 0.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Time")
 	bool bTimerOn = false;

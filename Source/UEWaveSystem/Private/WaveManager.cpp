@@ -28,6 +28,7 @@ void AWaveManager::Tick(float DeltaTime)
 	if (bTimerOn)
 	{
 		CurrentDuration += DeltaTime;
+		RemainingTime -= DeltaTime;
 		if (CurrentDuration >= Wave[CurrentWaveIndex]->Duration)
 		{
 			bTimerOn = false;
@@ -39,8 +40,14 @@ void AWaveManager::Tick(float DeltaTime)
 		CurrentWaveDelay +=DeltaTime;
 		if (CurrentWaveDelay >= Wave[CurrentWaveIndex]->SpawnParms.InitialDelay)
 		{
-			if (Wave.Num() - 1>CurrentWaveIndex)
+			if (Wave.Num() - 1 > CurrentWaveIndex)
+			{
 				CurrentWaveIndex++;
+			}
+			else
+			{
+				OnAllWaveFinished.Broadcast();
+			}
 			WaveOn();
 		}
 	}
@@ -63,5 +70,6 @@ void AWaveManager::InitialTime()
 {
 	CurrentDuration = 0.f;
 	CurrentWaveDelay = 0.f;
+	RemainingTime = Wave[CurrentWaveIndex]->Duration;
 }
 

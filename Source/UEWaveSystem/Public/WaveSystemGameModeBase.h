@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "WaveSystemGameModeBase.generated.h"
 
+class AWaveManager;
+
 UCLASS()
 class UEWAVESYSTEM_API AWaveSystemGameModeBase : public AGameModeBase
 {
@@ -13,5 +15,13 @@ class UEWAVESYSTEM_API AWaveSystemGameModeBase : public AGameModeBase
 
 public:
 	virtual void BeginPlay() override;
-
+private:
+	UPROPERTY()
+	AWaveManager* WaveManagerRef = nullptr;
+	
+	UFUNCTION()
+	void HandleAlllWaveFinished();
+private:
+	UPROPERTY(EditAnywhere, Category="Wave|Travel")
+	FName NextLevelName = NAME_None;
 };

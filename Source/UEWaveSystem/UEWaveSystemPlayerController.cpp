@@ -68,7 +68,7 @@ void AUEWaveSystemPlayerController::UpdateHUD()
 	if (!WaveManagerRef || !IsValid(WaveManagerRef)) return;
 	if (!GI || !IsValid(GI)) return;
 	
-	float DurationTime = WaveManagerRef->GetRemainingTime();
+	float RemainingTime = WaveManagerRef->GetRemainingTime();
 	FString WaveName = WaveManagerRef->GetWaveName();
 	
 	UTextBlock* WaveText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("WaveName")));
@@ -82,7 +82,7 @@ void AUEWaveSystemPlayerController::UpdateHUD()
 	}
 	if (TimerText)
 	{
-		const int32 TotalSec = FMath::Max(0,FMath::CeilToInt(DurationTime));
+		const int32 TotalSec = FMath::Max(0,FMath::CeilToInt(RemainingTime));
 		const int32 Min = TotalSec / 60;
 		const int32 Sec = TotalSec % 60;
 		TimerText->SetText(FText::FromString(FString::Printf(TEXT("%02d:%02d"),Min,Sec)));
