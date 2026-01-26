@@ -3,6 +3,7 @@
 
 #include "WaveSystemGameModeBase.h"
 
+#include "UEWaveSystemGameInstance.h"
 #include "WaveManager.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,14 +18,32 @@ void AWaveSystemGameModeBase::BeginPlay()
 	
 	if (!IsValid(WaveManagerRef)) return;
 	
-	WaveManagerRef->OnAllWaveFinished.AddDynamic(this, &AWaveSystemGameModeBase::HandleAlllWaveFinished);
-	
+	WaveManagerRef->OnAllWaveFinished.AddDynamic(this, &AWaveSystemGameModeBase::HandleAllWaveFinished);
+	UUEWaveSystemGameInstance * GI = GetGameInstance<UUEWaveSystemGameInstance>();
+	if (!GI) return;
+	CurrentIndex = GI->CurrentLevelIndex;
 	
 }
 
-void AWaveSystemGameModeBase::HandleAlllWaveFinished()
+void AWaveSystemGameModeBase::HandleAllWaveFinished()
 {
-	if (NextLevelName.IsNone()) return;
-	
-	UGameplayStatics::OpenLevel(this, NextLevelName);
+	if (NextLevelName.IsEmpty()) return;
+
+	UUEWaveSystemGameInstance* GI = GetGameInstance<UUEWaveSystemGameInstance>();
+	if (!GI) return;
+
+	if (CurrentIndex >= NextLevelName.Num())
+	{
+		GI->Level = 1;
+		CurrentIndex = 0;
+
+		UGameplayStatics::OpenLevel(this, FName("L_GameStartlevel"));
+	}
+	else
+	{
+		UGameplayStatics::OpenLevel(this, NextLevelName[CurrentIndex]);
+		
+		GI->Level++;
+		GI->CurrentLevelIndex++;	
+	}
 }

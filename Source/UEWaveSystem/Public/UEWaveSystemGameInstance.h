@@ -28,4 +28,11 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite)
 	int32 Level = 1;
+	
+	UPROPERTY()
+	int32 CurrentPlayerHP = 100;
+	
+	UPROPERTY(BlueprintReadWrite)
+	int32 CurrentLevelIndex = 0;
+	
 };

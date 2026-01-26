@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
+#include "StartPlayerController.h"
 #include "UEWaveSystemGameInstance.h"
 #include "WaveManager.h"
 #include "Engine/LocalPlayer.h"
@@ -32,8 +33,9 @@ void AUEWaveSystemPlayerController::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 	
-	GI = GetGameInstance<UUEWaveSystemGameInstance>();
+	SetInputMode(FInputModeGameAndUI());
 	
+	GI = GetGameInstance<UUEWaveSystemGameInstance>();
 	WaveManagerRef = Cast<AWaveManager>(
 		UGameplayStatics::GetActorOfClass(GetWorld(), AWaveManager::StaticClass())
 		);
@@ -46,19 +48,21 @@ void AUEWaveSystemPlayerController::BeginPlay()
 			HUDWidget->AddToViewport();
 		}
 	}
-	
-	PrimaryActorTick.bCanEverTick = true;
+	UE_LOG(LogTemp,Error,TEXT("AUEWaveSystemPlayerController Load"));
+	PrimaryActorTick.bCanEverTick = false;
+	GetWorldTimerManager().SetTimer(
+	UIUpdateTimer,
+	this,
+	&AUEWaveSystemPlayerController::UpdateHUD,
+	UIUpdateInterval,
+	true
+	);
 }
 
-void AUEWaveSystemPlayerController::Tick(float DeltaSeconds)
+void AUEWaveSystemPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::Tick(DeltaSeconds);
-	
-	UIAccum += DeltaSeconds;
-	if (UIAccum < UIUpdateInterval) return;
-	UIAccum = 0.f;
-	
-	UpdateHUD();
+	GetWorldTimerManager().ClearTimer(UIUpdateTimer);
+	Super::EndPlay(EndPlayReason);
 }
 
 void AUEWaveSystemPlayerController::UpdateHUD()

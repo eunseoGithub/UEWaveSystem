@@ -11,6 +11,7 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "TagManager.h"
+#include "UEWaveSystemGameInstance.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
@@ -54,6 +55,7 @@ AUEWaveSystemCharacter::AUEWaveSystemCharacter()
 	PlayerHP->SetWidgetSpace(EWidgetSpace::Screen);
 	PlayerHP->SetRelativeLocation(FVector(0.f,0.f,120.f));
 	PlayerHP->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 }
 
 FGameplayTag AUEWaveSystemCharacter::GetTag() const
@@ -96,6 +98,9 @@ void AUEWaveSystemCharacter::UpdateOverheadHP() const
 	HPText->SetText(FText::FromString(FString::Printf(TEXT("%d / %d"), Hp, MaxHp)));
 	const float Ratio = Hp/FMath::Max(MaxHp,1.f);
 	HPImage->SetPercent(Ratio);
+	UUEWaveSystemGameInstance* GI = GetGameInstance<UUEWaveSystemGameInstance>();
+	if (!GI) return;
+	GI->CurrentPlayerHP = Hp;
 }
 
 void AUEWaveSystemCharacter::BeginPlay()
@@ -105,4 +110,8 @@ void AUEWaveSystemCharacter::BeginPlay()
 	{
 		PlayerHP->SetWidgetClass(StatusWidgetClass);
 	}
+	UUEWaveSystemGameInstance* GI = GetGameInstance<UUEWaveSystemGameInstance>();
+	if (!GI) return;
+	Hp = GI->CurrentPlayerHP;
+	UpdateOverheadHP();
 }

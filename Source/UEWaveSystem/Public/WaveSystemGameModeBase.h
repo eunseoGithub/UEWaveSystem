@@ -20,8 +20,9 @@ private:
 	AWaveManager* WaveManagerRef = nullptr;
 	
 	UFUNCTION()
-	void HandleAlllWaveFinished();
+	void HandleAllWaveFinished();
 private:
 	UPROPERTY(EditAnywhere, Category="Wave|Travel")
-	FName NextLevelName = NAME_None;
+	TArray<FName> NextLevelName;
+	int32 CurrentIndex = 0;
 };

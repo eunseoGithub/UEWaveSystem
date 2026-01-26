@@ -40,15 +40,16 @@ void AWaveManager::Tick(float DeltaTime)
 		CurrentWaveDelay +=DeltaTime;
 		if (CurrentWaveDelay >= Wave[CurrentWaveIndex]->SpawnParms.InitialDelay)
 		{
-			if (Wave.Num() - 1 > CurrentWaveIndex)
+			if (Wave.Num()> CurrentWaveIndex + 1)
 			{
 				CurrentWaveIndex++;
+				WaveOn();
 			}
 			else
 			{
 				OnAllWaveFinished.Broadcast();
 			}
-			WaveOn();
+
 		}
 	}
 }

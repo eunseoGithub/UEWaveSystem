@@ -46,7 +46,6 @@ void AItemBase::OnItemOverlap(UPrimitiveComponent* OverlappedComp,AActor* OtherA
 	
 	if (Character && Character->GetTag() == PlayerTag)
 	{
-		GEngine->AddOnScreenDebugMessage(-1,2.0f,FColor::Green,FString::Printf(TEXT("Overlap!")));
 		ItemActive(OtherActor);
 	}
 }

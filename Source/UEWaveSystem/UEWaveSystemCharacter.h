@@ -20,7 +20,7 @@ public:
 	FGameplayTag GetTag() const;
 	
 	virtual void Tick(float DeltaSeconds) override;
-
+	
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	int32 GetHp() const;
@@ -39,7 +39,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 	
-	int32 Hp = 100;
 	int32 MaxHp = 100;
 	int32 MinHp = 0;
 protected:
@@ -47,6 +46,8 @@ protected:
 	UWidgetComponent* PlayerHP;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="UI")
 	TSubclassOf<UUserWidget> StatusWidgetClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HP")
+	int32 Hp;
 public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category="Tags")
 	FGameplayTag Tag;

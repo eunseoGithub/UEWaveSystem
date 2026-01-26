@@ -54,8 +54,8 @@ protected:
 	virtual void SetupInputComponent() override;
 	
 	// To add mapping context
-	virtual void BeginPlay();
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();
 	void OnSetDestinationTriggered();
@@ -78,7 +78,7 @@ private:
 	UPROPERTY()
 	UUserWidget* HUDWidget = nullptr;
 	
-	float UIAccum = 0.f;
+	FTimerHandle UIUpdateTimer;
 	UPROPERTY(EditAnywhere, Category="UI")
 	float UIUpdateInterval = 0.1f;
 	
