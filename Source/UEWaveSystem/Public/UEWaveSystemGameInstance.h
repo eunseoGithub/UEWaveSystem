@@ -25,4 +25,7 @@ public:
 public:
 	UPROPERTY(BlueprintReadOnly, Category="Score")
 	int32 Score = 0;
+	
+	UPROPERTY(BlueprintReadWrite)
+	int32 Level = 1;
 };

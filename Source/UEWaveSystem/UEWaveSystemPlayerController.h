@@ -7,6 +7,8 @@
 #include "GameFramework/PlayerController.h"
 #include "UEWaveSystemPlayerController.generated.h"
 
+class UUEWaveSystemGameInstance;
+class AWaveManager;
 /** Forward declaration to improve compiling times */
 class UNiagaraSystem;
 class UInputMappingContext;
@@ -41,7 +43,10 @@ public:
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SetDestinationTouchAction;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
@@ -50,7 +55,7 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
-
+	virtual void Tick(float DeltaSeconds) override;
 	/** Input handlers for SetDestination action. */
 	void OnInputStarted();
 	void OnSetDestinationTriggered();
@@ -63,6 +68,21 @@ private:
 
 	bool bIsTouch; // Is it a touch device
 	float FollowTime; // For how long it has been pressed
+	
+	UPROPERTY()
+	AWaveManager* WaveManagerRef = nullptr;
+	
+	UPROPERTY()
+	UUEWaveSystemGameInstance* GI = nullptr;
+	
+	UPROPERTY()
+	UUserWidget* HUDWidget = nullptr;
+	
+	float UIAccum = 0.f;
+	UPROPERTY(EditAnywhere, Category="UI")
+	float UIUpdateInterval = 0.1f;
+	
+	void UpdateHUD();
 };
 
 

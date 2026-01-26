@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WaveDataAsset.h"
 #include "GameFramework/Actor.h"
 #include "WaveManager.generated.h"
 
@@ -29,6 +30,12 @@ private:
 	void SetSpawnerData(UWaveDataAsset* CurrentWave) const;
 	void WaveOn();
 	void InitialTime();
+public:
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetRemainingTime() const {return CurrentDuration;}
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FString GetWaveName() const {return Wave[CurrentWaveIndex]->WaveName;}
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Time")
 	float CurrentDuration = 0.0f;
@@ -39,3 +46,4 @@ private:
 	int32 CurrentWaveIndex = 0;
 	float CurrentWaveDelay = 0.0f;
 };
+

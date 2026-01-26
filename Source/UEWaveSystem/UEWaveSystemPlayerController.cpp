@@ -10,7 +10,12 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
+#include "UEWaveSystemGameInstance.h"
+#include "WaveManager.h"
 #include "Engine/LocalPlayer.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -26,6 +31,71 @@ void AUEWaveSystemPlayerController::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+	
+	GI = GetGameInstance<UUEWaveSystemGameInstance>();
+	
+	WaveManagerRef = Cast<AWaveManager>(
+		UGameplayStatics::GetActorOfClass(GetWorld(), AWaveManager::StaticClass())
+		);
+	
+	if (HUDWidgetClass)
+	{
+		HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+		if (HUDWidget)
+		{
+			HUDWidget->AddToViewport();
+		}
+	}
+	
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+void AUEWaveSystemPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	UIAccum += DeltaSeconds;
+	if (UIAccum < UIUpdateInterval) return;
+	UIAccum = 0.f;
+	
+	UpdateHUD();
+}
+
+void AUEWaveSystemPlayerController::UpdateHUD()
+{
+	if (!HUDWidget) return;
+	
+	if (!WaveManagerRef || !IsValid(WaveManagerRef)) return;
+	if (!GI || !IsValid(GI)) return;
+	
+	float DurationTime = WaveManagerRef->GetRemainingTime();
+	FString WaveName = WaveManagerRef->GetWaveName();
+	
+	UTextBlock* WaveText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("WaveName")));
+	UTextBlock* TimerText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("GameTimer")));
+	UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Score")));
+	UTextBlock* LevelText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("LevelName")));
+	
+	if (WaveText)
+	{
+		WaveText->SetText(FText::FromString(FString::Printf(TEXT("%s"), *WaveName)));
+	}
+	if (TimerText)
+	{
+		const int32 TotalSec = FMath::Max(0,FMath::CeilToInt(DurationTime));
+		const int32 Min = TotalSec / 60;
+		const int32 Sec = TotalSec % 60;
+		TimerText->SetText(FText::FromString(FString::Printf(TEXT("%02d:%02d"),Min,Sec)));
+	}
+	if (ScoreText)
+	{
+		ScoreText->SetText(FText::AsNumber(GI->Score));
+	}
+	if (LevelText)
+	{
+		LevelText->SetText(FText::FromString(FString::Printf(TEXT("Lv %d"), GI->Level)));
+	}
+	
 }
 
 void AUEWaveSystemPlayerController::SetupInputComponent()
