@@ -11,6 +11,10 @@
 #include "Materials/Material.h"
 #include "Engine/World.h"
 #include "TagManager.h"
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
+#include "Components/WidgetComponent.h"
+
 AUEWaveSystemCharacter::AUEWaveSystemCharacter()
 {
 	// Set size for player capsule
@@ -44,6 +48,12 @@ AUEWaveSystemCharacter::AUEWaveSystemCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 	Tag = TAG_PLAYER;
+	
+	PlayerHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPUI"));
+	PlayerHP->SetupAttachment(GetRootComponent());
+	PlayerHP->SetWidgetSpace(EWidgetSpace::Screen);
+	PlayerHP->SetRelativeLocation(FVector(0.f,0.f,120.f));
+	PlayerHP->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 FGameplayTag AUEWaveSystemCharacter::GetTag() const
@@ -65,10 +75,34 @@ void AUEWaveSystemCharacter::AddHp(int32 Amount)
 {
 	Hp = FMath::Clamp(Hp + Amount,0.f,MaxHp);
 	UE_LOG(LogTemp,Log,TEXT("HP : %d"),Hp);
+	UpdateOverheadHP();
 }
 
 void AUEWaveSystemCharacter::Damage(int32 Amount)
 {
 	Hp = FMath::Clamp(Hp- Amount,MinHp,Hp);
 	UE_LOG(LogTemp,Log,TEXT("HP : %d"),Hp);
+	UpdateOverheadHP();
+}
+
+void AUEWaveSystemCharacter::UpdateOverheadHP() const
+{
+	if (!PlayerHP) return;
+	UUserWidget* RawWidget = PlayerHP->GetUserWidgetObject();
+	if (!RawWidget) return;
+	UTextBlock* HPText = Cast<UTextBlock>(RawWidget->GetWidgetFromName(TEXT("PlayerHp")));
+	UProgressBar* HPImage = Cast<UProgressBar>(RawWidget->GetWidgetFromName(TEXT("HP_ProgressBar")));
+	if (!HPText||!HPImage) return;
+	HPText->SetText(FText::FromString(FString::Printf(TEXT("%d / %d"), Hp, MaxHp)));
+	const float Ratio = Hp/FMath::Max(MaxHp,1.f);
+	HPImage->SetPercent(Ratio);
+}
+
+void AUEWaveSystemCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	if (StatusWidgetClass)
+	{
+		PlayerHP->SetWidgetClass(StatusWidgetClass);
+	}
 }

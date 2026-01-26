@@ -18,14 +18,50 @@ AWaveManager::AWaveManager()
 void AWaveManager::BeginPlay()
 {
 	Super::BeginPlay();
-	Spawner->SetSpawnWaveParams(Wave[0]->SpawnParms);
-	Spawner->SpawnBatch();
+	WaveOn();
 }
 
 // Called every frame
 void AWaveManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (bTimerOn)
+	{
+		CurrentDuration += DeltaTime;
+		if (CurrentDuration >= Wave[CurrentWaveIndex]->Duration)
+		{
+			bTimerOn = false;
+			Spawner->CleanupAliveList();
+		}
+	}
+	else
+	{
+		CurrentWaveDelay +=DeltaTime;
+		if (CurrentWaveDelay >= Wave[CurrentWaveIndex]->SpawnParms.InitialDelay)
+		{
+			if (Wave.Num() - 1>CurrentWaveIndex)
+				CurrentWaveIndex++;
+			WaveOn();
+		}
+	}
+}
 
+void AWaveManager::SetSpawnerData(UWaveDataAsset* CurrentWave) const
+{
+	Spawner->SetSpawnWaveParams(CurrentWave->SpawnParms);
+}
+
+void AWaveManager::WaveOn()
+{
+	InitialTime();
+	SetSpawnerData(Wave[CurrentWaveIndex]);
+	Spawner->SpawnBatch();
+	bTimerOn = true;
+}
+
+void AWaveManager::InitialTime()
+{
+	CurrentDuration = 0.f;
+	CurrentWaveDelay = 0.f;
 }
 

@@ -30,10 +30,12 @@ void AItemSpawner::BeginPlay()
 
 void AItemSpawner::CleanupAliveList()
 {
-	AliveItems.RemoveAll([](AActor* Actor)
+	for (AItemBase* Actor : AliveItems)
 	{
-		return !IsValid(Actor);
-	});
+		if (IsValid(Actor))
+			Actor->Destroy();
+	}
+	AliveItems.Empty();
 }
 
 TSubclassOf<AItemBase> AItemSpawner::PickRandomItemClass() const

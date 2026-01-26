@@ -15,9 +15,6 @@ struct FSpawnerWaveParams
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 NumTicks = 5;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 BatchCount = 3;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -53,7 +50,6 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spawn|Legacy")
 	bool bAutoSpawn = false;
-	
 	
 private:
 	FTimerHandle SpawnTimer;
