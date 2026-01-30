@@ -15,6 +15,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AUEWaveSystemCharacter::AUEWaveSystemCharacter()
 {
@@ -84,6 +85,16 @@ void AUEWaveSystemCharacter::Damage(int32 Amount)
 {
 	Hp = FMath::Clamp(Hp- Amount,MinHp,Hp);
 	UE_LOG(LogTemp,Log,TEXT("HP : %d"),Hp);
+	
+	if (Hp <= 0)
+	{
+		UE_LOG(LogTemp,Log,TEXT("!!!!!!!!!!!!!!!!!!!!!!HP : %d"),Hp);
+		UUEWaveSystemGameInstance* GI = GetGameInstance<UUEWaveSystemGameInstance>();
+		if (!GI) return;
+		GI->Reset();
+		UGameplayStatics::OpenLevel(this, FName("L_GameStartlevel"));
+	}
+	
 	UpdateOverheadHP();
 }
 
@@ -110,8 +121,8 @@ void AUEWaveSystemCharacter::BeginPlay()
 	{
 		PlayerHP->SetWidgetClass(StatusWidgetClass);
 	}
-	UUEWaveSystemGameInstance* GI = GetGameInstance<UUEWaveSystemGameInstance>();
-	if (!GI) return;
-	Hp = GI->CurrentPlayerHP;
+	
+	Hp = 100;
+	UE_LOG(LogTemp,Log,TEXT("??????????????HP : %d"),Hp);
 	UpdateOverheadHP();
 }

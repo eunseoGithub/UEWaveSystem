@@ -19,9 +19,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Score")
 	int32 GetScore();
-	
 	UFUNCTION(BlueprintCallable, Category="Score")
-	void ResetScore();
+	void Reset();
 public:
 	UPROPERTY(BlueprintReadOnly, Category="Score")
 	int32 Score = 0;

@@ -14,7 +14,10 @@ int32 UUEWaveSystemGameInstance::GetScore()
 	return Score;
 }
 
-void UUEWaveSystemGameInstance::ResetScore()
+void UUEWaveSystemGameInstance::Reset()
 {
 	Score = 0;
+	CurrentPlayerHP = 100;
+	CurrentLevelIndex = 0;
+	Level = 1;
 }
